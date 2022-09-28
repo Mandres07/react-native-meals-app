@@ -1,23 +1,26 @@
-import { useLayoutEffect, useContext } from 'react';
+import { useLayoutEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import IconButton from '../components/IconButton';
 import List from '../components/MealDetail/List';
 import Subtitle from '../components/MealDetail/Subtitle';
 import MealDetails from '../components/MealDetails';
-import { FavoritesContext } from '../store/context/favorites-context';
 import { MEALS } from '../data/dummy-data';
+import { addFavorite, removeFavorite } from '../store/redux/favorites';
 
 const MealDetailScreen = ({ route, navigation }) => {
-   const favoritesContext = useContext(FavoritesContext);
+   const favoriteMealIds = useSelector((state) => state.favoriteMeals.ids);
+   const dispatch = useDispatch();
+
    const mealId = route.params.id;
    const meal = MEALS.find(meal => meal.id === mealId);
-   const isFavorite = favoritesContext.ids.includes(mealId);
+   const isFavorite = favoriteMealIds.includes(mealId);
 
    function toggleFavoriteMealHandler() {
-      if(isFavorite){
-         return favoritesContext.removeFavorite(mealId)
+      if (isFavorite) {
+         return dispatch(removeFavorite({ id: mealId }));
       }
-      return favoritesContext.addFavorite(mealId);
+      return dispatch(addFavorite({ id: mealId }));
    }
 
    useLayoutEffect(() => {
